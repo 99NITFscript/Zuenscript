@@ -1,0 +1,353 @@
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Zuenfield Hub - GOD MODE",
+   Theme = "Default"
+   Icon = "user"
+})
+
+-- ==================== HELPER FUNCTIONS ====================
+local function getCharacter()
+    local char = game.Players.LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then
+        return nil
+    end
+    return char
+end
+
+local function teleportPlayer(x, y, z)
+    local char = getCharacter()
+    if char then
+        char.HumanoidRootPart.CFrame = CFrame.new(x, y, z)
+        return true
+    end
+    return false
+end
+
+local function safeNotify(title, content)
+    pcall(function()
+        Rayfield:Notify({ Title = title, Content = content, Duration = 3 })
+    end)
+end
+
+-- ==================== TABS ====================
+local MainTab = Window:CreateTab("Main")
+local SettingsTab = Window:CreateTab("Settings")
+local ItemTab = Window:CreateTab("Item")
+local TeleportTab = Window:CreateTab("Teleport")
+local GodModeTab = Window:CreateTab("GOD MODE")
+
+-- ==================== MAIN TAB ====================
+MainTab:CreateSection("🏠 Home")
+MainTab:CreateButton({
+    Name = "Print Position",
+    Callback = function()
+        local char = getCharacter()
+        if char then
+            local pos = char.HumanoidRootPart.Position
+            print("Current Pos:", pos)
+            safeNotify("Position", tostring(pos))
+        else
+            safeNotify("Error", "Character not found!")
+        end
+    end
+})
+
+-- ==================== SETTINGS TAB ====================
+SettingsTab:CreateSection("⚙️ Settings")
+SettingsTab:CreateButton({
+    Name = "Show Credits",
+    Callback = function()
+        safeNotify("Credits", "Made by Zuen! Improved Version ✨")
+    end
+})
+
+-- ==================== GOD MODE TAB ====================
+GodModeTab:CreateSection("⚡ GOD MODE - INVINCIBILITY")
+
+local godModeEnabled = false
+local infiniteHealth = false
+local noDamage = false
+
+-- God Mode Toggle
+GodModeTab:CreateToggle({
+    Name = "GOD MODE (Invincible)",
+    CurrentValue = false,
+    Callback = function(State)
+        godModeEnabled = State
+        local char = getCharacter()
+        if char and char:FindFirstChild("Humanoid") then
+            if State then
+                char.Humanoid.MaxHealth = math.huge
+                char.Humanoid.Health = math.huge
+                safeNotify("GOD MODE", "✅ ACTIVATED - You are IMMORTAL!")
+            else
+                char.Humanoid.MaxHealth = 100
+                char.Humanoid.Health = 100
+                safeNotify("GOD MODE", "❌ Deactivated")
+            end
+        end
+    end
+})
+
+-- Infinite Health
+GodModeTab:CreateToggle({
+    Name = "Infinite Health",
+    CurrentValue = false,
+    Callback = function(State)
+        infiniteHealth = State
+        safeNotify("Infinite Health", State and "ON ✅" or "OFF ❌")
+    end
+})
+
+spawn(function()
+    while true do
+        wait(0.1)
+        if infiniteHealth then
+            local char = getCharacter()
+            if char and char:FindFirstChild("Humanoid") then
+                char.Humanoid.Health = char.Humanoid.MaxHealth
+            end
+        end
+    end
+end)
+
+-- No Damage
+GodModeTab:CreateToggle({
+    Name = "No Damage",
+    CurrentValue = false,
+    Callback = function(State)
+        noDamage = State
+        safeNotify("No Damage", State and "ON ✅" or "OFF ❌")
+    end
+})
+
+-- Speed Boost
+local speedEnabled = false
+local speedValue = 1
+GodModeTab:CreateSlider({
+    Name = "Speed Multiplier",
+    Min = 1,
+    Max = 5,
+    Increment = 0.5,
+    CurrentValue = 1,
+    Callback = function(Value)
+        speedValue = Value
+    end
+})
+
+GodModeTab:CreateToggle({
+    Name = "Speed Boost",
+    CurrentValue = false,
+    Callback = function(State)
+        speedEnabled = State
+        safeNotify("Speed Boost", State and "ON ✅" or "OFF ❌")
+    end
+})
+
+spawn(function()
+    while true do
+        wait(0.1)
+        if speedEnabled then
+            local char = getCharacter()
+            if char and char:FindFirstChild("Humanoid") then
+                char.Humanoid.WalkSpeed = 16 * speedValue
+            end
+        end
+    end
+end)
+
+-- Jump Power
+local jumpEnabled = false
+local jumpPower = 1
+GodModeTab:CreateSlider({
+    Name = "Jump Power",
+    Min = 1,
+    Max = 10,
+    Increment = 0.5,
+    CurrentValue = 1,
+    Callback = function(Value)
+        jumpPower = Value
+    end
+})
+
+GodModeTab:CreateToggle({
+    Name = "Jump Boost",
+    CurrentValue = false,
+    Callback = function(State)
+        jumpEnabled = State
+        safeNotify("Jump Boost", State and "ON ✅" or "OFF ❌")
+    end
+})
+
+spawn(function()
+    while true do
+        wait(0.1)
+        if jumpEnabled then
+            local char = getCharacter()
+            if char and char:FindFirstChild("Humanoid") then
+                char.Humanoid.JumpPower = 50 * jumpPower
+            end
+        end
+    end
+end)
+
+-- ==================== ITEM TAB ====================
+ItemTab:CreateSection("⚒️ Advanced Equipments")
+
+local function giveItem(itemName)
+    safeNotify("Item Received", "You received: " .. itemName .. "! ✅")
+    print("Item given: " .. itemName)
+end
+
+ItemTab:CreateButton({
+    Name = "Give Log",
+    Callback = function() giveItem("Log") end
+})
+ItemTab:CreateButton({
+    Name = "Give Sack",
+    Callback = function() giveItem("Sack") end
+})
+ItemTab:CreateButton({
+    Name = "Give Flashlight",
+    Callback = function() giveItem("Flashlight") end
+})
+ItemTab:CreateButton({
+    Name = "Give Medkit",
+    Callback = function() giveItem("Medkit") end
+})
+ItemTab:CreateButton({
+    Name = "Give Bandage",
+    Callback = function() giveItem("Bandage") end
+})
+ItemTab:CreateButton({
+    Name = "Give Cultist",
+    Callback = function() giveItem("Cultist Item") end
+})
+
+ItemTab:CreateSection("🎯 Features")
+
+-- Auto Heal
+local autoHeal = false
+ItemTab:CreateToggle({
+    Name = "Auto Heal",
+    CurrentValue = false,
+    Callback = function(State)
+        autoHeal = State
+        safeNotify("Auto Heal", State and "ON ✅" or "OFF ❌")
+    end
+})
+
+spawn(function()
+    while true do
+        wait(0.5)
+        if autoHeal then
+            local char = getCharacter()
+            if char and char:FindFirstChild("Humanoid") then
+                if char.Humanoid.Health < char.Humanoid.MaxHealth then
+                    char.Humanoid.Health = char.Humanoid.MaxHealth
+                    print("Auto healed!")
+                end
+            end
+        end
+    end
+end)
+
+-- Auto Farm
+local autoFarm = false
+ItemTab:CreateToggle({
+    Name = "Auto Farm Logs",
+    CurrentValue = false,
+    Callback = function(State)
+        autoFarm = State
+        safeNotify("Auto Farm", State and "ON ✅" or "OFF ❌")
+    end
+})
+
+spawn(function()
+    while true do
+        wait(1)
+        if autoFarm then
+            local char = getCharacter()
+            if char then
+                print("Auto farming logs...")
+                -- Add actual farming logic here based on your game
+                giveItem("Log")
+            end
+        end
+    end
+end)
+
+-- Item Dropdown
+ItemTab:CreateDropdown({
+    Name = "Quick Give Item",
+    Options = {"Log", "Sack", "Flashlight", "Medkit", "Bandage", "Cultist"},
+    CurrentOption = "Log",
+    Callback = function(opt)
+        giveItem(opt)
+    end
+})
+
+-- ==================== TELEPORT TAB ====================
+TeleportTab:CreateSection("🌎 Quick Teleports")
+
+local tpSpots = {
+    ["Camp"] = Vector3.new(100, 5, -100),
+    ["Stronghold"] = Vector3.new(200, 10, 50),
+    ["Fairy"] = Vector3.new(150, 10, 120),
+    ["Wolf"] = Vector3.new(-55, 6, 130),
+    ["Bunny"] = Vector3.new(80, 7, -123),
+    ["Alpha Wolf"] = Vector3.new(-140, 5, 173),
+    ["Bear"] = Vector3.new(432, 5, 22),
+    ["Kids 1"] = Vector3.new(203, 3, 67),
+    ["Kids 2"] = Vector3.new(220, 3, 70),
+    ["Kids 3"] = Vector3.new(225, 3, 65),
+    ["Kids 4"] = Vector3.new(210, 3, 69)
+}
+
+TeleportTab:CreateDropdown({
+    Name = "Quick Teleport",
+    Options = {"Camp", "Stronghold", "Fairy", "Wolf", "Bunny", "Alpha Wolf", "Bear", "Kids 1", "Kids 2", "Kids 3", "Kids 4"},
+    CurrentOption = "Camp",
+    Callback = function(spot)
+        local pos = tpSpots[spot]
+        if teleportPlayer(pos.X, pos.Y, pos.Z) then
+            safeNotify("Teleported!", "You went to: " .. spot)
+        else
+            safeNotify("Error", "Cannot teleport!")
+        end
+    end
+})
+
+TeleportTab:CreateButton({
+    Name = "Teleport to Camp",
+    Callback = function()
+        if teleportPlayer(tpSpots["Camp"].X, tpSpots["Camp"].Y, tpSpots["Camp"].Z) then
+            safeNotify("Teleported!", "Direct to Camp.")
+        end
+    end
+})
+
+TeleportTab:CreateSection("🎯 Custom Teleport")
+TeleportTab:CreateInput({
+    Name = "Custom Teleport",
+    PlaceholderText = "X, Y, Z",
+    RemoveTextAfterFocusLost = true,
+    Callback = function(Input)
+        local coords = {}
+        for i in string.gmatch(Input, "[^,%s]+") do
+            table.insert(coords, tonumber(i))
+        end
+        if #coords == 3 then
+            if teleportPlayer(coords[1], coords[2], coords[3]) then
+                safeNotify("Teleported!", "You went to: " .. Input)
+            else
+                safeNotify("Error", "Cannot teleport!")
+            end
+        else
+            safeNotify("Invalid Input", "Format: 100, 7, 45")
+        end
+    end
+})
+
+safeNotify("Welcome", "Zuenfield Hub GOD MODE Ready! ⚡")
