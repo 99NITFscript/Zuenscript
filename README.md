@@ -1,5 +1,9 @@
 # Zuenscript
+
 # 99 Nights in the Forest Script
+
+# Copy & Paste (Execute) 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/99NITFscript/Zuenscript/refs/heads/main/Best_Script-Zuenfield.lua"))()
 
 ### ✨ Features
 Teleport: Instantly travel to campfire, grinder, or any item
