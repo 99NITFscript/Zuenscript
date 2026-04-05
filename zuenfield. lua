@@ -1,0 +1,141 @@
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Zuenfield Hub",
+   Theme = "Default"
+})
+
+-- Tabs
+local MainTab = Window:CreateTab("Main", "Home")
+local SettingsTab = Window:CreateTab("Settings", "Cog")
+local ItemTab = Window:CreateTab("🪓 Item")
+local TeleportTab = Window:CreateTab("🪄 Teleport")
+
+-- Main Tab
+MainTab:CreateSection("🏠 Home")
+MainTab:CreateButton({
+    Name = "Print Position",
+    Callback = function()
+        local pos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+        print("Current Pos:", pos)
+        Rayfield:Notify({ Title = "Current Position", Content = tostring(pos), Duration = 5 })
+    end
+})
+
+-- Settings Tab
+SettingsTab:CreateSection("⚙️ Settings")
+SettingsTab:CreateButton({
+    Name = "Show Credits",
+    Callback = function()
+        Rayfield:Notify({ Title = "Credits", Content = "Made by Zuen!", Duration = 5 })
+    end
+})
+
+-- Item Tab - Equipment Section
+ItemTab:CreateSection("⚒️ Advanced Equipments")
+ItemTab:CreateButton({ Name = "Give Log", Callback = function() Rayfield:Notify({Title="Item", Content="You received a Log!", Duration=3}) end })
+ItemTab:CreateButton({ Name = "Give Sack", Callback = function() Rayfield:Notify({Title="Item", Content="You received a Sack!", Duration=3}) end })
+ItemTab:CreateButton({ Name = "Give Flashlight", Callback = function() Rayfield:Notify({Title="Item", Content="You received a Flashlight!", Duration=3}) end })
+ItemTab:CreateButton({ Name = "Give Medkit", Callback = function() Rayfield:Notify({Title="Item", Content="You received a Medkit!", Duration=3}) end })
+ItemTab:CreateButton({ Name = "Give Bandage", Callback = function() Rayfield:Notify({Title="Item", Content="You received a Bandage!", Duration=3}) end })
+ItemTab:CreateButton({ Name = "Give Cultist", Callback = function() Rayfield:Notify({Title="Item", Content="You received a Cultist item!", Duration=3}) end })
+
+-- Item Tab - Sample Toggle and Dropdown
+local autoHeal = false
+ItemTab:CreateToggle({
+    Name = "Auto Heal",
+    CurrentValue = false,
+    Callback = function(State)
+        autoHeal = State
+        Rayfield:Notify({ Title="Auto Heal", Content=State and "Auto Heal ON" or "Auto Heal OFF", Duration=3 })
+    end
+})
+spawn(function()
+    while true do wait(1)
+        if autoHeal then
+            print("Nag-auto heal!") -- Palitan ng actual auto-heal logic
+        end
+    end
+end)
+
+ItemTab:CreateDropdown({
+    Name = "Give Advanced Equipment",
+    Options = {"Log", "Sack", "Flashlight", "Medkit", "Bandage", "Cultist"},
+    CurrentOption = "Log",
+    Callback = function(opt)
+        Rayfield:Notify({ Title = "Item", Content = "You received: " .. opt, Duration = 3 })
+        print(opt.." given!") -- Palitan ng real logic
+    end
+})
+
+-- Item Tab - Auto-farm Example
+local autoFarm = false
+ItemTab:CreateToggle({
+    Name = "Auto Farm Logs",
+    CurrentValue = false,
+    Callback = function(State)
+        autoFarm = State
+        Rayfield:Notify({ Title = "Auto Farm", Content = State and "Auto Farm ON" or "Auto Farm OFF", Duration = 3 })
+    end
+})
+spawn(function()
+    while true do wait(1)
+        if autoFarm then
+            print("Nag-a-auto farm ng Logs!") -- Palitan ng real logic
+        end
+    end
+end)
+
+-- Teleport Tab - Section & Advanced Buttons
+TeleportTab:CreateSection("🌎 Quick Teleports")
+local tpSpots = {
+    ["Camp"] = Vector3.new(100, 5, -100),
+    ["Stronghold"] = Vector3.new(200, 10, 50),
+    ["Fairy"] = Vector3.new(150, 10, 120),
+    ["Wolf"] = Vector3.new(-55, 6, 130),
+    ["Bunny"] = Vector3.new(80, 7, -123),
+    ["Alpha Wolf"] = Vector3.new(-140, 5, 173),
+    ["Bear"] = Vector3.new(432, 5, 22),
+    ["Kids 1"] = Vector3.new(203, 3, 67),
+    ["Kids 2"] = Vector3.new(220, 3, 70),
+    ["Kids 3"] = Vector3.new(225, 3, 65),
+    ["Kids 4"] = Vector3.new(210, 3, 69)
+    -- ADD pa kung gusto mo
+}
+TeleportTab:CreateDropdown({
+    Name = "Quick Teleport",
+    Options = {"Camp", "Stronghold", "Fairy", "Wolf", "Bunny", "Alpha Wolf", "Bear", "Kids 1", "Kids 2", "Kids 3", "Kids 4"},
+    CurrentOption = "Camp",
+    Callback = function(spot)
+        local pos = tpSpots[spot]
+        if pos then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
+            Rayfield:Notify({ Title = "Teleported!", Content = "You went to: "..spot, Duration = 3 })
+        end
+    end
+})
+
+TeleportTab:CreateInput({
+    Name = "Custom Teleport",
+    PlaceholderText = "X, Y, Z",
+    RemoveTextAfterFocusLost = true,
+    Callback = function(Input)
+        local coords = {}
+        for i in string.gmatch(Input, "[^,%s]+") do table.insert(coords, tonumber(i)) end
+        if #coords == 3 then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(coords[1], coords[2], coords[3])
+            Rayfield:Notify({ Title = "Teleported!", Content = "You went to: "..Input, Duration = 3 })
+        else
+            Rayfield:Notify({ Title = "Invalid Input", Content = "Format: 100, 7, 45", Duration = 3 })
+        end
+    end
+})
+
+-- Sample Teleport Button
+TeleportTab:CreateButton({
+    Name = "Teleport to Camp",
+    Callback = function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(tpSpots["Camp"])
+        Rayfield:Notify({ Title = "Teleported!", Content = "Direct to Camp.", Duration = 3 })
+    end
+})
